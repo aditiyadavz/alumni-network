@@ -37,7 +37,6 @@ const AlumniPage = () => {
       fetchAlumni();
     }, 400); // Debounce search
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, filters]);
 
   const handleConnect = async (id) => {

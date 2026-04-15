@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-require('dotenv').config({ path: '../backend/.env' });
+require('dotenv').config();
 
-const User = require('../backend/src/models/User.model');
-const Job = require('../backend/src/models/Job.model');
-const Event = require('../backend/src/models/Event.model');
+const User = require('./src/models/User.model');
+const Job = require('./src/models/Job.model');
+const Event = require('./src/models/Event.model');
 
 const seedDB = async () => {
     try {
-        console.log('Connecting to Database...');
-        // Targeting the local mapped port exposed by Docker-compose bypass mapping
-        await mongoose.connect('mongodb://admin:secret@127.0.0.1:27017/alumni_db?authSource=admin');
+        console.log('Connecting to Database inside container...');
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://admin:secret@mongo:27017/alumni_db?authSource=admin');
         console.log('Connected to cluster.');
 
         console.log('Purging existing datastore mappings...');
@@ -96,8 +95,8 @@ const seedDB = async () => {
             company: 'Google',
             location: 'Remote',
             type: 'Full-time',
-            description: 'We are looking for a skilled Frontend Engineer to join our core Search team. You will work extensively with React and modern web APIs.',
-            requirements: ['3+ years experience with React', 'Strong JavaScript fundamentals', 'Experience with state management (Redux/Context)'],
+            description: 'We are looking for a skilled Frontend Engineer to join our core Search team.',
+            requirements: ['3+ years experience with React', 'Strong JavaScript fundamentals'],
             salaryRange: { min: 120000, max: 180000 },
             postedBy: alumni1._id,
             status: 'open'
@@ -109,7 +108,7 @@ const seedDB = async () => {
             location: 'Seattle, WA',
             type: 'Internship',
             description: 'Join the Azure Networking team for the summer! Great opportunity for upcoming grads.',
-            requirements: ['Strong DSA skills', 'Familiarity with Cloud Concepts', 'Currently pursuing CS/IT degree'],
+            requirements: ['Strong DSA skills', 'Familiarity with Cloud Concepts'],
             postedBy: alumni2._id,
             status: 'open'
         });
@@ -120,7 +119,7 @@ const seedDB = async () => {
             location: 'Bangalore, India',
             type: 'Full-time',
             description: 'Exciting early-stage crypto startup looking for robust API engineers.',
-            requirements: ['Node.js expertise', 'MongoDB experience', 'WebSocket architecture knowledge'],
+            requirements: ['Node.js expertise', 'MongoDB experience'],
             postedBy: alumni3._id,
             status: 'open'
         });
@@ -139,11 +138,11 @@ const seedDB = async () => {
 
         const event1 = new Event({
             title: 'Navigating Big Tech Interviews',
-            description: 'Join Jane and Alex as they discuss how to crack system design and DSA rounds at FAANG companies. Q&A session at the end!',
+            description: 'Join Jane and Alex as they discuss how to crack system design and DSA rounds at FAANG companies.',
             date: futureDate,
             time: '18:00',
             venue: 'Google Meet',
-            onlineLink: 'https://meet.google.com/xyz-abcd-efg',
+            onlineLink: 'https://meet.google.com/xyz',
             type: 'Online',
             maxAttendees: 150,
             organizer: alumni1._id
@@ -151,10 +150,10 @@ const seedDB = async () => {
 
         const event2 = new Event({
             title: 'Annual Alumni Meetup 2026',
-            description: 'The biggest networking event of the year! Reconnect with your batchmates, mentors, and professors over dinner and drinks.',
+            description: 'The biggest networking event of the year!',
             date: soonDate,
             time: '19:00',
-            venue: 'Grand Plaza Hotel, Main City',
+            venue: 'Grand Plaza Hotel',
             type: 'Offline',
             maxAttendees: 500,
             organizer: admin._id
@@ -166,8 +165,6 @@ const seedDB = async () => {
 
         console.log('\n=======================================');
         console.log('🚀 Database Fully Enriched!');
-        console.log('Admin Email: admin@alumninet.com');
-        console.log('Password for all users: password123');
         console.log('=======================================\n');
         process.exit(0);
     } catch (err) {

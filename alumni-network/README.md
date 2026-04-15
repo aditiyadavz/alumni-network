@@ -33,29 +33,44 @@ This project successfully implements the following core competencies:
 
 ## 🏗 Getting Started (Local Development)
 
-1. **Clone the Repo:**
-   ```bash
-   git clone <YOUR_REPO_URL>
-   cd alumni-network
-   ```
+### 1. Prerequisites
+- **Docker & Docker Compose** installed and running on your system.
+- **Node.js** installed locally (for running the database seeder script).
 
-2. **Start the cluster via Docker Compose:**
-   ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
-   ```
+### 2. Environment Setup
+Clone the repository and set up your environment configuration. The backend requires specific credentials to connect to MongoDB and sign JWTs securely:
+```bash
+git clone <YOUR_REPO_URL>
+cd alumni-network
 
-3. **Database Seeding (Optional but Recommended):**
-   In a new terminal, run the seeder script to populate default users:
-   ```bash
-   cd scripts
-   npm i mongoose bcryptjs dotenv
-   node seed.js
-   ```
-   *This initializes the database with a core Admin user `admin@alumninet.com` (password: `password123`) and sample users.*
+# Create your .env file from the provided example
+cp .env.example .env
+# (On Windows CMD/PowerShell: copy .env.example .env)
+```
 
-4. **Access the Application:**
-   - **Frontend:** http://localhost:3000
-   - **Backend API:** http://localhost:5000/api
+### 3. Start the Cluster via Docker Compose
+We use the `.override.yml` file for local development to map code volumes continuously and expose database ports explicitly:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build -d
+```
+*(You can run without `-d` if you wish to see real-time log outputs for frontend and backend traffic.)*
+
+### 4. Database Seeding (Optional but Recommended)
+To populate the application with rich demonstration data (users, jobs, events), execute the integrated seeder directly inside the isolated backend container. This completely avoids local dependency installations or Windows PowerShell execution policy errors:
+```bash
+docker exec alumni-network-backend-1 node seed.js
+```
+*This instantly enriches the active database with an Admin user, Students, FAANG Alumni, real-world Job postings, and upcoming tech Events! (Core Admin Login: `admin@alumninet.com` / `password123`)*
+
+### 5. Access the Application
+- **Frontend Dashboard:** [http://localhost:3000](http://localhost:3000)
+- **Backend API Layer:** [http://localhost:5000/api](http://localhost:5000/api)
+
+### 6. Resetting the Cluster (Tear Down)
+If you wish to fully wipe the MongoDB records, application state, and container data to start completely fresh:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml down -v
+```
 
 ## ☁️ Production Deployment (AWS / Terraform)
 
